@@ -24,7 +24,7 @@
     .lead { font-size:clamp(26px,4.2vw,58px); font-weight:500; line-height:1.18; letter-spacing:-.028em; max-width:1060px; margin:0 0 clamp(26px,3.5vw,52px); }
     .metric { font-size:clamp(84px,13.5vw,194px); font-weight:800; line-height:1.07; letter-spacing:0; font-variant-numeric:lining-nums tabular-nums; white-space:nowrap; margin:0; }
     .unit { font-size:clamp(28px,4.6vw,66px); font-weight:700; line-height:1.14; letter-spacing:-.02em; margin:10px 0 0; }
-    .source-note { font-size:clamp(13px,1.05vw,15px); line-height:1.65; font-weight:400; opacity:.85; max-width:840px; margin:clamp(30px,3.6vw,48px) 0 0; }
+    .source-note { font-size:clamp(13px,1.05vw,15px); line-height:1.65; font-weight:400; opacity:.75; max-width:840px; margin:clamp(30px,3.6vw,48px) 0 0; }
     .question { min-height:65svh; display:flex; align-items:center; border-bottom:1px solid rgba(255,255,255,.38); padding-block:100px; }
     .question h2 { font-size:clamp(26px,4.2vw,58px); font-weight:800; line-height:1.08; letter-spacing:-.025em; margin:0; }
     .person-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(130px,29%); column-gap:6%; align-items:center; }
@@ -61,8 +61,9 @@
       .person-grid { grid-template-columns:1fr; gap:27px; }
       .person-figure { justify-content:flex-end; max-height:215px; }
       .person-figure svg { height:200px; max-width:39vw; }
+      .person-figure { display: none; }
       .question { min-height:56svh; }
-      .question h2 { font-size:clamp(52px,11.5vw,90px); }
+      .question h2 { font-size:clamp(26px,4.2vw,58px); }
       .equivalent .unit { font-size:clamp(39px,8vw,64px); }
       .field-ui { height:91px; margin-bottom:-91px; }
       .field-ui .counter { font-size:clamp(20px,4.7vw,28px); }
@@ -73,8 +74,10 @@
       :root { --gutter:18px; }
       .metric { font-size:16vw; }
       .person-figure svg { height:175px; }
+      .person-figure { display: none; }
       .field-ui .counter { font-size:19px; }
       .field-ui .counter-side { font-size:9px; }
+      .source-note { font-size:clamp(8px,1vw,10px); }
     }
     @media (prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; } }
   </style>
