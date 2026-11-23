@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#164de5">
+  <meta name="description" content="The annual CO₂-equivalent impact of burning the coal exported from the Port of Newcastle in 2025, shown as one icon per Australian's annual emissions.">
+  <meta property="og:title" content="Newcastle's coal, measured in Australian lifetimes of emissions">
+  <meta property="og:description" content="An estimated 363 million tonnes of CO₂-e — equivalent to 21.9 million Australians' annual greenhouse gas emissions.">
+  <meta property="og:type" content="website">
+  <title>Newcastle coal exports in perspective</title>
+  <style>
+    :root { --blue:#224cbd/*#164de5*/; --white:#fff; --gutter:clamp(24px,5.4vw,94px); }
+    *,*::before,*::after { box-sizing:border-box; }
+    html,body { margin:0; background:var(--blue); color:var(--white); }
+    body { font-family: Helvetica,sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+    ::selection { background:var(--white); color:var(--blue); }
+    a { color:inherit; text-underline-offset:3px; text-decoration-thickness:1px; }
+    a:hover { text-decoration-thickness:2px; }
+    a:focus-visible { outline:2px solid #fff; outline-offset:5px; }
+    .frame { padding-inline:var(--gutter); }
+    .step { min-height:100svh; border-bottom:1px solid rgba(255,255,255,.38); display:flex; flex-direction:column; justify-content:center; padding-block:clamp(95px,12vw,160px); }
+    .step-inner { width:100%; max-width:1500px; }
+    .lead { font-size:clamp(26px,4.2vw,58px); font-weight:500; line-height:1.18; letter-spacing:-.028em; max-width:1060px; margin:0 0 clamp(26px,3.5vw,52px); }
+    .metric { font-size:clamp(84px,13.5vw,194px); font-weight:800; line-height:1.07; letter-spacing:0; font-variant-numeric:lining-nums tabular-nums; white-space:nowrap; margin:0; }
+    .unit { font-size:clamp(28px,4.6vw,66px); font-weight:700; line-height:1.14; letter-spacing:-.02em; margin:10px 0 0; }
+    .source-note { font-size:clamp(13px,1.05vw,15px); line-height:1.65; font-weight:400; opacity:.85; max-width:840px; margin:clamp(30px,3.6vw,48px) 0 0; }
+    .question { min-height:65svh; display:flex; align-items:center; border-bottom:1px solid rgba(255,255,255,.38); padding-block:100px; }
+    .question h2 { font-size:clamp(26px,4.2vw,58px); font-weight:800; line-height:1.08; letter-spacing:-.025em; margin:0; }
+    .person-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(130px,29%); column-gap:6%; align-items:center; }
+    .person-copy { min-width:0; }
+    .person-figure { display:flex; align-items:center; justify-content:center; min-width:0; }
+    .person-figure svg { display:block; width:auto; height:min(51vh,490px); max-width:100%; }
+    .equivalent .lead { max-width:1200px; }
+    .equivalent .unit { font-size:clamp(40px,7vw,99px); }
+    .handoff { margin:clamp(50px,7vw,95px) 0 0; font-size:clamp(17px,1.65vw,23px); line-height:1.4; }
+    .handoff svg { vertical-align:-4px; margin-right:8px; }
+    .field { position:relative; min-height:100vh; background:var(--blue); isolation:isolate; }
+    .field-ui { position:sticky; top:0; height:100px; margin-bottom:-100px; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:15px; padding:16px var(--gutter) 20px; background:var(--blue); pointer-events:none; }
+    .field-ui .counter-title { font-size:clamp(11px,1vw,13px); font-weight:700; line-height:1.4; }
+    .field-ui .counter { font-size:clamp(22px,3vw,40px); line-height:1.17; font-weight:800; letter-spacing:0; font-variant-numeric:tabular-nums; margin-top:5px; }
+    .field-ui .counter-total { opacity:.7; }
+    .field-ui .counter-side { text-align:right; font-size:clamp(10px,1vw,12px); line-height:1.5; }
+    .field-ui .progress-track { position:absolute; left:0; right:0; top:0; height:3px; background:rgba(255,255,255,.2); }
+    .field-ui .progress-fill { height:100%; width:0; background:#fff; transform-origin:left center; }
+    #crowdCanvas { position:sticky; top:0; display:block; width:100%; height:100vh; height:100svh; pointer-events:none; }
+    .field-fallback { display:none; padding:30px var(--gutter); font-size:24px; }
+    .outro { border-top:1px solid rgba(255,255,255,.4); padding-top:clamp(95px,12vw,170px); padding-bottom:clamp(85px,12vw,165px); }
+    .end-total { font-size:clamp(63px,10vw,155px); font-weight:800; line-height:1.08; letter-spacing:0; font-variant-numeric:tabular-nums; margin:0; }
+    .outro-lead { font-size:clamp(25px,3.8vw,53px); line-height:1.19; letter-spacing:-.03em; max-width:1100px; margin:24px 0 0; }
+    .outro-body { font-size:clamp(17px,1.8vw,25px); line-height:1.45; max-width:870px; margin:48px 0 0; }
+    .method { margin-top:clamp(140px,18vw,260px); padding-top:32px; border-top:1px solid rgba(255,255,255,.4); max-width:1000px; }
+    .method h3 { font-size:clamp(20px,2vw,27px); font-weight:700; line-height:1.35; margin:0 0 22px; }
+    .method p { font-size:clamp(14px,1.2vw,17px); line-height:1.65; margin:0 0 18px; opacity:.9; }
+    .method .detail { font-size:clamp(13px,1.05vw,15px); opacity:.83; }
+    @media (max-width:760px) {
+      .step { min-height:100svh; padding-block:80px; }
+      .lead { font-size:clamp(28px,6.4vw,45px); }
+      .metric { font-size:clamp(75px,16vw,122px); }
+      .unit { font-size:clamp(27px,6vw,43px); }
+      .person-grid { grid-template-columns:1fr; gap:27px; }
+      .person-figure { justify-content:flex-end; max-height:215px; }
+      .person-figure svg { height:200px; max-width:39vw; }
+      .question { min-height:56svh; }
+      .question h2 { font-size:clamp(52px,11.5vw,90px); }
+      .equivalent .unit { font-size:clamp(39px,8vw,64px); }
+      .field-ui { height:91px; margin-bottom:-91px; }
+      .field-ui .counter { font-size:clamp(20px,4.7vw,28px); }
+      .field-ui .counter-side { font-size:10px; }
+      .end-total { font-size:clamp(52px,10vw,90px); }
+    }
+    @media (max-width:380px) {
+      :root { --gutter:18px; }
+      .metric { font-size:16vw; }
+      .person-figure svg { height:175px; }
+      .field-ui .counter { font-size:19px; }
+      .field-ui .counter-side { font-size:9px; }
+    }
+    @media (prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="step frame coal" aria-labelledby="coal-heading">
+      <div class="step-inner">
+        <h1 class="lead" id="coal-heading">In 2025, the Port of Newcastle exported</h1>
+        <p class="metric">149 million</p>
+        <p class="unit">tonnes of coal.</p>
+        <p class="source-note">149,028,111 reported coal revenue tonnes in calendar year 2025. <a href="https://pon.com.au/wp-content/uploads/2026/04/PON_Annual_Trade_Report_2025-7.pdf#page=3" target="_blank" rel="noopener noreferrer">Source: Port of Newcastle, 2025 Annual Trade Report</a>.</p>
+      </div>
+    </section>
+
+    <section class="step frame burned" aria-labelledby="burned-heading">
+      <div class="step-inner">
+        <h2 class="lead" id="burned-heading">When burned, that coal will release about</h2>
+        <p class="metric">363 million</p>
+        <p class="unit">tonnes of CO₂-e.</p>
+        <p class="source-note">Calculated using the Australian Government's bituminous-coal factors: 27.0 GJ per tonne × 90.24 kg CO₂-e per GJ (CO₂, methane and nitrous oxide combined). <a href="https://www.dcceew.gov.au/sites/default/files/documents/national-greenhouse-account-factors-2025.pdf#page=15" target="_blank" rel="noopener noreferrer">Source: National Greenhouse Accounts Factors 2025, Table 4</a>. Actual emissions depend on the grades of coal exported.</p>
+      </div>
+    </section>
+
+    <section class="question frame" aria-labelledby="question-heading">
+      <h2 id="question-heading">That sounds like a lot. But how much is it, really?</h2>
+    </section>
+
+    <section class="step frame person" aria-labelledby="person-heading">
+      <div class="step-inner person-grid">
+        <div class="person-copy">
+          <h2 class="lead" id="person-heading">In 2025, Australia's emissions averaged</h2>
+          <p class="metric">16.6</p>
+          <p class="unit">tonnes of CO₂-e<br>per person.</p>
+          <p class="source-note">Australian national greenhouse gas emissions per capita for the year to December 2025, including all sectors and the net land-use contribution. <a href="https://www.dcceew.gov.au/sites/default/files/documents/quarterly-update-australias-national-greenhouse-gas-inventory-dec-2025.pdf#page=27" target="_blank" rel="noopener noreferrer">Source: Australian Government, National Greenhouse Gas Inventory, December 2025, p. 27</a>.</p>
+        </div>
+        <div class="person-figure" aria-hidden="true">
+          <svg viewBox="3 0 10 16" role="presentation" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <!-- Bootstrap Icons person-standing, MIT licence: https://icons.getbootstrap.com/icons/person-standing/ -->
+            <path d="M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M6 6.75v8.5a.75.75 0 0 0 1.5 0V10.5a.5.5 0 0 1 1 0v4.75a.75.75 0 0 0 1.5 0v-8.5a.25.25 0 1 1 .5 0v2.5a.75.75 0 0 0 1.5 0V6.5a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v2.75a.75.75 0 0 0 1.5 0v-2.5a.25.25 0 0 1 .5 0"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="step frame equivalent" aria-labelledby="equivalent-heading">
+      <div class="step-inner">
+        <h2 class="lead" id="equivalent-heading">That means burning Newcastle's 2025 coal exports would produce as much CO₂-e as the annual emissions of</h2>
+        <p class="metric">21.9 million</p>
+        <p class="unit">Australians.</p>
+        <p class="source-note">Estimated 363 million tonnes of CO₂-e divided by Australia's 2025 average of 16.6 tonnes CO₂-e per person, using unrounded intermediate values. The result is rounded to three significant figures. Sources: <a href="https://pon.com.au/wp-content/uploads/2026/04/PON_Annual_Trade_Report_2025-7.pdf#page=3" target="_blank" rel="noopener noreferrer">2025 coal exports</a>, <a href="https://www.dcceew.gov.au/sites/default/files/documents/national-greenhouse-account-factors-2025.pdf#page=15" target="_blank" rel="noopener noreferrer">combustion emission factors</a>, and <a href="https://www.dcceew.gov.au/sites/default/files/documents/quarterly-update-australias-national-greenhouse-gas-inventory-dec-2025.pdf#page=27" target="_blank" rel="noopener noreferrer">national per-person emissions</a>.</p>
+        <p class="handoff"><svg width="18" height="25" viewBox="0 0 18 25" fill="none" aria-hidden="true"><path d="M9 0v22M2 16l7 7 7-7" stroke="currentColor" stroke-width="1.8"/></svg>Scroll through them — one icon per person.</p>
+      </div>
+    </section>
+
+    <section class="field" id="field" aria-label="A scrollable field containing 21.9 million standard person icons, each representing one Australian's annual CO₂-equivalent emissions.">
+      <div class="field-ui" aria-hidden="true">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div><div class="counter-title">Icons passed</div><div class="counter"><span id="seen">0</span> <span class="counter-total">/ 21,900,000</span></div></div>
+        <div class="counter-side">1 icon = 1 person's<br>annual CO₂-e</div>
+      </div>
+      <canvas id="crowdCanvas" role="img" aria-label="Human figures repeated 21.9 million times in a scrollable grid."></canvas>
+      <div class="field-fallback" id="fallback">This section represents approximately 21.9 million people, one icon each.</div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      // One icon for each person's annual CO₂-e emissions — not one per thousand or million.
+      const COAL_TONNES = 149028111;
+      const ENERGY_CONTENT_GJ_PER_TONNE = 27.0; // NGA Factors 2025, Table 4
+      const COMBINED_KG_CO2E_PER_GJ = 90.24; // CO2 + CH4 + N2O, not CO2 alone
+      const CO2E_PER_PERSON = 16.6; // NGAI December 2025, all sectors including net LULUCF
+      const UNROUNDED_CO2E_TONNES = COAL_TONNES * ENERGY_CONTENT_GJ_PER_TONNE * COMBINED_KG_CO2E_PER_GJ / 1000;
+      const UNROUNDED_EQUIVALENTS = UNROUNDED_CO2E_TONNES / CO2E_PER_PERSON;
+      // The 27.0 GJ/t and 16.6 t/person inputs have three significant figures.
+      const ICON_COUNT = Math.round(UNROUNDED_EQUIVALENTS / 100000) * 100000; // 21,900,000
+      const field = document.getElementById('field');
+      const canvas = document.getElementById('crowdCanvas');
+      const seen = document.getElementById('seen');
+      const progressFill = document.getElementById('progressFill');
+      const fallback = document.getElementById('fallback');
+      const ctx = canvas.getContext('2d', {alpha:true});
+      if (!ctx) {
+        canvas.style.display = 'none';
+        fallback.style.display = 'block';
+        return;
+      }
+      const formatter = new Intl.NumberFormat('en-AU');
+      let config = null;
+      let sprite = null;
+      let scheduled = false;
+      let lastSeen = -1;
+      const GRID_TOP = 160;
+      const GRID_BOTTOM = 130;
+      
+      function makeSprite(width, height) {
+        // Same standard Bootstrap Icons "person-standing" silhouette as the hero.
+        // Crop the original 16x16 viewBox to x=3..13 so the figure uses its space.
+        const res = 4;
+        const img = document.createElement('canvas');
+        img.width = Math.ceil(width * res);
+        img.height = Math.ceil(height * res);
+        const g = img.getContext('2d');
+        g.scale(res, res);
+        g.fillStyle = '#ffffff';
+        g.scale(width / 10, height / 16);
+        g.translate(-3, 0);
+        const person = new Path2D('M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M6 6.75v8.5a.75.75 0 0 0 1.5 0V10.5a.5.5 0 0 1 1 0v4.75a.75.75 0 0 0 1.5 0v-8.5a.25.25 0 1 1 .5 0v2.5a.75.75 0 0 0 1.5 0V6.5a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v2.75a.75.75 0 0 0 1.5 0v-2.5a.25.25 0 0 1 .5 0');
+        g.fill(person);
+        return img;
+      }
+
+      function setup() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const mobile = w <= 600;
+        const pitchX = mobile ? 8.4 : 12.2;
+        const pitchY = mobile ? 11 : 17;
+        const iconW = mobile ? 6.8 : 9.3;
+        const iconH = mobile ? 10 : 14.8;
+        const side = mobile ? (w <= 370 ? 18 : 24) : Math.max(24, Math.min(94, w * .054));
+        const usableWidth = Math.min(1450, Math.max(10, w - side * 2));
+        const cols = Math.max(1, Math.floor(usableWidth / pitchX));
+        const rows = Math.ceil(ICON_COUNT / cols);
+        const offsetX = (w - cols * pitchX) / 2 + (pitchX - iconW) / 2;
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(w * pixelRatio);
+        canvas.height = Math.round(h * pixelRatio);
+        canvas.style.height = h + 'px';
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        ctx.imageSmoothingEnabled = true;
+        sprite = makeSprite(iconW, iconH);
+        // Keep the whole field inside the safe browser scroll range, including small phones.
+        field.style.height = Math.ceil(GRID_TOP + rows * pitchY + GRID_BOTTOM) + 'px';
+        config = {w,h, pitchX,pitchY,iconW,iconH,cols,rows,offsetX};
+        render();
+      }
+
+      function render() {
+        scheduled = false;
+        if (!config) return;
+        const c = config;
+        const fieldBox = field.getBoundingClientRect();
+        const canvasBox = canvas.getBoundingClientRect();
+        const viewportH = c.h;
+        ctx.clearRect(0, 0, c.w, viewportH);
+        if (fieldBox.bottom <= 0 || fieldBox.top >= viewportH) return;
+        const top = fieldBox.top + GRID_TOP - canvasBox.top;
+        const firstRow = Math.max(0, Math.floor((-top) / c.pitchY) - 1);
+        const lastRow = Math.min(c.rows - 1, Math.ceil((viewportH - top) / c.pitchY) + 1);
+        ctx.globalAlpha = .91;
+        for (let row = firstRow; row <= lastRow; row++) {
+          const y = Math.round(top + row * c.pitchY);
+          const remaining = ICON_COUNT - row * c.cols;
+          const n = Math.min(c.cols, remaining);
+          if (n <= 0) break;
+          for (let col = 0; col < n; col++) {
+            ctx.drawImage(sprite, Math.round(c.offsetX + col * c.pitchX), y, c.iconW, c.iconH);
+          }
+        }
+        ctx.globalAlpha = 1;
+        // Count complete figures that have entered the viewport, including the final row.
+        const reachedRows = Math.min(c.rows, Math.max(0, Math.floor((viewportH - top - c.iconH) / c.pitchY) + 1));
+        const reached = Math.min(ICON_COUNT, reachedRows * c.cols);
+        if (lastSeen !== reached) {
+          seen.textContent = formatter.format(reached);
+          progressFill.style.width = (reached / ICON_COUNT * 100).toFixed(5) + '%';
+          lastSeen = reached;
+        }
+      }
+
+      function requestRender() {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(render);
+      }
+      window.addEventListener('scroll', requestRender, {passive:true});
+      window.addEventListener('resize', () => {setup();}, {passive:true});
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(requestRender);
+      setup();
+      // Expose only summary values for easy testing/auditing of the static visualisation.
+      window.coalImpactStats = Object.freeze({coalTonnes:COAL_TONNES, energyContentGJPerTonne:ENERGY_CONTENT_GJ_PER_TONNE, combinedCO2eKgPerGJ:COMBINED_KG_CO2E_PER_GJ, co2ePerPerson:CO2E_PER_PERSON, unroundedCO2eTonnes:UNROUNDED_CO2E_TONNES, unroundedPersonEquivalents:UNROUNDED_EQUIVALENTS, iconCount:ICON_COUNT});
+    })();
+  </script>
+</body>
+</html>
